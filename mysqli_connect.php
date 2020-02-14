@@ -7,12 +7,14 @@
 // Set the database access information as constants:
 define('DB_USER', 'root');
 define('DB_PASSWORD', 'root');
-define('DB_HOST', 'localhost');
+define('DB_HOST', 'localhost:3306');
 define('DB_NAME', 'sitename');
 
-// Make the connection:
-$dbc = @mysqli_init(DB_HOST, DB_USER, DB_PASSWORD, DB_NAME) 
-OR die('Could not connect to MySQL: ' . mysqli_connect_error() );
 
-// Set the encoding...
-mysqli_set_charset($dbc, 'utf8');
+// Make the connection:
+$dbc = new mysqli(DB_HOST,DB_USER,DB_PASSWORD,DB_NAME);
+
+if ($mysqli -> connect_errno) {
+  echo "Failed to connect to MySQL: " . $mysqli -> connect_error;
+  exit();
+}
