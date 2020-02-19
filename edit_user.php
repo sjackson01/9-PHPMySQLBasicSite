@@ -17,3 +17,18 @@
   include('includes/footer.html');
   exit();
   }
+
+  require ('mysqli_connect.php');
+
+  // Check if the form has been sumitted
+  if($_SERVER['REQUEST_METHOD']=='POST'){
+      $error = [];
+
+      // Check for a first name
+      if(empty($_POST['first_name'])){
+          $error[] = 'You forgot to enter your firlst name.';
+      }else{
+          $fn = mysqli_real_escape_string($dbc, trim($_POST ['first_name']));
+      }
+}
+  
