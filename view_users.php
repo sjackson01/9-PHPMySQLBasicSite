@@ -8,7 +8,7 @@
    require_once ('mysqli_connect.php');
  
    // Number of records to show per page:
-   $display = 2;
+   $display = 5;
 
    // Determine how many pages there are...
    if (isset($_GET['p']) && is_numeric($_GET['p'])) { // Already been determined.
@@ -29,16 +29,37 @@
      }
    } // End of p IF.
   
-  // Determine where in the database to start returning results...
+   // Determine where in the database to start returning results...
    if (isset($_GET['s']) && is_numeric($_GET['s'])) {
      $start = $_GET['s'];
    } else {
      $start = 0;
    }
   
+   
+   // Default is by registration date.
+   $sort = (isset($_GET['sort'])) ? $_GET['sort'] : 'rd';
+ 
+   // Determine the sorting order:
+   switch ($sort) {
+      case 'ln':
+         $order_by = 'last_name ASC';
+         break;
+      case 'fn':
+         $order_by = 'first_name ASC';
+         break;
+      case 'rd':
+         $order_by = 'registration_date ASC';
+         break;
+      default:
+         $order_by = 'registration_date ASC';
+         $sort = 'rd';
+         break;
+   }
    // Define the query:
    $q = "SELECT last_name, first_name, DATE_FORMAT(registration_date, '%M %d, %Y') AS dr,
-    user_id FROM users ORDER BY registration_date ASC LIMIT $start, $display";
+   user_id FROM users ORDER BY $order_by LIMIT $start, $display";
+
    $r = @mysqli_query($dbc, $q);
   
    // Table header:
@@ -46,9 +67,10 @@
    <thead>
    <tr>
      <th align="left"><strong>Edit</strong></th>
-     <th align="left"><strong>Delete</strong></th>3     <th align="left"><strong>Last Name</strong></th>
-     <th align="left"><strong>First Name</strong></th>
-     <th align="left"><strong>Date Registered</strong></th>
+     <th align="left"><strong>Delete</strong></th>     
+     <th align="left"><strong><a href="view_users.php?sort=ln">Last Name</a></strong></th>
+     <th align="left"><strong><a href="view_users.php?sort=fn">First Name</a></strong></th>
+     <th align="left"><strong><a href="view_users.php?sort=rd">Date Registered</a></strong></th>
    </tr>
    </thead>
    <tbody>
@@ -77,23 +99,22 @@
    // Make the links to other pages, if necessary.
    if ($pages > 1) {
   
-     // Add some spacing and start a paragraph:
+   // Add some spacing and start a paragraph:
      echo '<br><p>';
   
-     // Determine what page the script is on:
+   // Determine what page the script is on:
    $current_page = ($start/$display) + 1;
   
-     // If it's not the first page, make a Previous link:
+   // If it's not the first page, make a Previous link:
    if ($current_page != 1) {
-        echo '<a href="view_users.php?s=' . ($start - $display) . '&p=' . $pages .
-          '">Previous</a> ';
+      echo '<a href="view_users.php?s=' . ($start - $display) . '&p=' . $pages . '&sort=' . $sort . '">Previous</a> ';
    }
   
-     // Make all the numbered pages:
+   // Make all the numbered pages:
    for ($i = 1; $i <= $pages; $i++) {
        if ($i != $current_page) {
-          echo '<a href="view_users.php?s=' . (($display * ($i - 1))) . '&p=' . $pages .
-             '">' . $i . '</a> ';
+         echo '<a href="view_users.php?s=' . (($display * ($i - 1))) . '&p=' . $pages .
+             '&sort=' . $sort . '">' . $i . '</a> ';
        } else {
           echo $i . ' ';
        }
@@ -101,8 +122,8 @@
   
    // If it's not the last page, make a Next button:
    if ($current_page != $pages) {
-       echo '<a href="view_users.php?s=' . ($start + $display) . '&p=' . $pages .
-          '">Next</a>';
+      echo '<a href="view_users.php?s=' . ($start + $display) . '&p=' . $pages .
+          '&sort=' . $sort . '">Next</a>';
     }
  
     echo '</p>'; // Close the paragraph.
