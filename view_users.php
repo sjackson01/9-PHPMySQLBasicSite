@@ -1,14 +1,14 @@
 <?php # Script 10.4 - #4
   // This script retrieves all the records from the users table.
   // This new version paginates the query results.
-     $page_title = 'View the Current Users';
-     include('includes/header.html');
-     echo '<h1>Registered Users</h1>';
+   $page_title = 'View the Current Users';
+   include('includes/header.html');
+   echo '<h1>Registered Users</h1>';
   
-    require_once ('mysqli_connect.php');
+   require_once ('mysqli_connect.php');
  
-    // Number of records to show per page:
-    $display = 10;
+   // Number of records to show per page:
+   $display = 2;
 
    // Determine how many pages there are...
    if (isset($_GET['p']) && is_numeric($_GET['p'])) { // Already been determined.
@@ -23,9 +23,9 @@
      $records = $row[0];
   
      // Calculate the number of pages...
-     if ($records > $display) { // More than 1 page.
+   if ($records > $display) { // More than 1 page.
         $pages = ceil ($records/$display);
-     } else {
+   } else {
      }
    } // End of p IF.
   
